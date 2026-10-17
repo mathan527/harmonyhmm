@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HarmonyHMM</title>
+<meta name="description" content="Hidden Markov Models that harmonize melodies, recognize musical style and track tempo with a Kalman filter.">
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="note-ico">&#9835;</span> Harmony<b>HMM</b></div>
+  <nav id="nav">
+    <button data-tab="harmonize" class="on">Harmonize</button>
+    <button data-tab="style">Style detector</button>
+    <button data-tab="tempo">Tempo tracker</button>
+    <button data-tab="lab">Under the hood</button>
+  </nav>
+</header>
+<main>
+  <section id="harmonize" class="tab on">
+    <h2>Harmonize a melody</h2>
+    <p class="lead">Click cells to write a melody (one note per beat, starting at beat 1). The hidden states are chords; the notes you wrote are the observations. The <b>Viterbi algorithm</b> finds the most probable chord sequence under an HMM trained on Bach chorales.</p>
+    <div class="card">
+      <div class="ctl">
+        <label>Key <select id="key"></select></label>
+        <label>Mode <select id="mode"><option value="major">Major</option><option value="minor">Minor</option></select></label>
+        <label>Tempo <output id="bpmv">96</output> BPM<input type="range" id="bpm" min="60" max="160" value="96"></label>
+        <label>Preset <select id="preset"></select></label>
+      </div>
+      <div class="scroll"><div id="grid"></div></div>
+      <div id="chordRow" class="chords"></div>
+      <div class="btns">
+        <button class="pri" id="playH">&#9654; Harmonize &amp; play</button>
+        <button id="playM">Play melody only</button>
+        <button id="clear">Clear</button>
+        <label class="inline"><input type="checkbox" id="nohmm"> Ignore transitions (best chord per note)</label>
+      </div>
+      <p id="hInfo" class="note"></p>
+    </div>
+  </section>
+  <section id="style" class="tab">
+    <h2>Which style is this melody?</h2>
+    <p class="lead">One HMM per style (Bach chorales, Palestrina, folk tunes) scores the melody you wrote on the Harmonize tab using the <b>forward algorithm with scaling factors</b>. The style whose model finds the melody most probable wins. Mark notes as short (eighth notes) in the row under the grid.</p>
+    <div class="card"><div class="cv"><canvas id="styleChart"></canvas></div><p id="styleInfo" class="note"></p></div>
+  </section>
+  <section id="tempo" class="tab">
+    <h2>Tempo tracking with a Kalman filter</h2>
+    <p class="lead">Humans tap with timing jitter. A linear dynamical system tracks the hidden tempo (period and its drift) from noisy inter-tap intervals. Tap steadily, then speed up or slow down.</p>
+    <div class="grid">
+      <div class="card"><div class="btns"><button class="pri big" id="tap">TAP</button><button id="tapReset">Reset</button></div>
+      <p id="tapInfo" class="note">Tap at least 4 times.</p><div class="cv"><canvas id="tapChart"></canvas></div></div>
+      <div class="card"><h3>Simulated tempo change</h3><div class="cv"><canvas id="kalmanChart"></canvas></div><p id="kalmanInfo" class="note"></p></div>
+    </div>
+  </section>
+  <section id="lab" class="tab"></section>
+</main>
+<footer>HarmonyHMM &middot; ML Unit 4 &middot; HMM, Baum-Welch, forward-backward with scaling, Viterbi and Kalman filter implemented from scratch in NumPy (verified against hmmlearn).</footer>
+<script src="app.js"></script>
+</body>
+</html>
